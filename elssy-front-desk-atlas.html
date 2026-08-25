@@ -1,0 +1,4118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Elssy Hospital Front Desk Atlas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>:root{
+  --paper:#F2EFE7;
+  --paper-grid:#DFD8C9;
+  --card:#FFFDF9;
+  --ink:#24201D;
+  --muted:#6B635B;
+  --rule:#C9C1B4;
+
+  --chrome:#1C1A18;
+  --chrome-2:#25221F;
+  --chrome-line:#3A3531;
+  --chrome-ink:#EDE7DD;
+  --chrome-muted:#948B80;
+
+  --r-reception:#C96A4A;
+  --r-doctor:#2E4A7B;
+  --r-nurse:#A47C1B;
+  --r-patient:#2F7D7B;
+  --r-admin:#1E5F4B;
+  --r-system:#3B3B3B;
+  --r-pharmacist:#6E4B8E;
+
+  --warn:#B23A25;
+  --warn-bg:#FBEDE9;
+  --info:#3D5580;
+  --info-bg:#ECEFF6;
+  --success:#1E5F4B;
+  --success-bg:#E8F1EC;
+
+  --font-display:"Newsreader",Georgia,"Times New Roman",serif;
+  --font-sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--chrome);
+  color:var(--chrome-ink);
+  font-family:var(--font-sans);
+  overflow:hidden;
+}
+
+/* ---------- shell ---------- */
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh}
+
+.topbar{
+  display:flex;align-items:center;gap:20px;
+  padding:12px 20px;
+  background:var(--chrome);
+  border-bottom:1px solid var(--chrome-line);
+  flex:0 0 auto;
+}
+.brand{display:flex;align-items:baseline;gap:14px;min-width:0}
+.brand h1{
+  font-family:var(--font-display);
+  font-weight:500;font-size:20px;line-height:1.1;margin:0;
+  letter-spacing:-.01em;color:var(--chrome-ink);
+  white-space:nowrap;
+}
+.eyebrow{
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--chrome-muted);white-space:nowrap;
+}
+.counts{
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.09em;
+  color:var(--chrome-muted);margin-left:auto;white-space:nowrap;
+  font-variant-numeric:tabular-nums;
+}
+.tools{display:flex;gap:6px;flex:0 0 auto}
+.btn{
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.07em;
+  text-transform:uppercase;
+  background:var(--chrome-2);color:var(--chrome-ink);
+  border:1px solid var(--chrome-line);border-radius:4px;
+  padding:7px 11px;cursor:pointer;
+}
+.btn:hover{background:#302C28;border-color:#4A443E}
+.btn:focus-visible{outline:2px solid var(--r-nurse);outline-offset:2px}
+
+.main{display:flex;flex:1 1 auto;min-height:0}
+
+/* ---------- rail ---------- */
+.rail{
+  width:238px;flex:0 0 238px;
+  background:var(--chrome);
+  border-right:1px solid var(--chrome-line);
+  overflow-y:auto;padding:16px 14px 28px;
+}
+.rail h2{
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--chrome-muted);
+  margin:0 0 10px;font-weight:500;
+}
+.rail section + section{margin-top:24px;padding-top:20px;border-top:1px solid var(--chrome-line)}
+
+.phase-list{display:flex;flex-direction:column;gap:1px}
+.phase-btn{
+  display:flex;align-items:center;gap:9px;width:100%;
+  background:none;border:0;border-radius:4px;
+  padding:7px 8px;cursor:pointer;text-align:left;color:var(--chrome-ink);
+  font-family:var(--font-sans);font-size:12.5px;line-height:1.25;
+}
+.phase-btn:hover{background:var(--chrome-2)}
+.phase-btn:focus-visible{outline:2px solid var(--r-nurse);outline-offset:-2px}
+.phase-btn .num{
+  font-family:var(--font-mono);font-size:9.5px;color:var(--chrome-muted);
+  flex:0 0 20px;letter-spacing:.04em;
+}
+.phase-btn .swatch{width:3px;height:22px;border-radius:2px;flex:0 0 3px}
+.phase-btn .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.legend{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px}
+.legend div{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;color:var(--chrome-ink);
+}
+.legend .dot{width:8px;height:8px;border-radius:50%;flex:0 0 8px}
+.legend .sq{width:9px;height:9px;flex:0 0 9px;border:1.5px solid var(--chrome-muted)}
+.legend .sq.gap{border-style:dashed;border-color:#D4735C}
+.legend .sq.dec{transform:rotate(45deg);border-color:#C9A24B;width:8px;height:8px;flex-basis:8px}
+.legend .sq.end{background:var(--chrome-ink);border-color:var(--chrome-ink);border-radius:50%}
+
+.minimap-wrap{display:flex;justify-content:center}
+.minimap{
+  position:relative;cursor:pointer;
+  border:1px solid var(--chrome-line);border-radius:3px;
+  background:#0F0E0D;line-height:0;
+}
+.minimap canvas{display:block;border-radius:2px}
+.mm-view{
+  position:absolute;border:1.5px solid #E8B23C;
+  background:rgba(232,178,60,.14);pointer-events:none;border-radius:1px;
+}
+
+/* ---------- canvas ---------- */
+.viewport{
+  flex:1 1 auto;position:relative;overflow:hidden;
+  background:
+    linear-gradient(var(--paper-grid) 1px,transparent 1px) 0 0/40px 40px,
+    linear-gradient(90deg,var(--paper-grid) 1px,transparent 1px) 0 0/40px 40px,
+    var(--paper);
+  cursor:grab;
+}
+.viewport.dragging{cursor:grabbing}
+.canvas{position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform}
+.layer{position:absolute;top:0;left:0}
+#edges{overflow:visible;pointer-events:none}
+
+/* ---------- bands ---------- */
+.band{
+  position:absolute;border-radius:9px;
+  border:1px solid var(--rule);
+  border-left-width:4px;
+}
+.band-hd{
+  position:absolute;top:-13px;left:16px;
+  display:flex;align-items:center;gap:12px;
+  background:var(--card);border:1px solid var(--rule);
+  border-radius:5px;padding:4px 12px;white-space:nowrap;
+}
+.band-hd .t{
+  font-family:var(--font-display);font-size:14.5px;font-weight:600;
+  color:var(--ink);letter-spacing:-.005em;
+}
+.band-hd .o{
+  font-family:var(--font-mono);font-size:9px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--muted);
+}
+
+/* ---------- nodes ---------- */
+.n{
+  position:absolute;
+  background:var(--card);
+  border:1px solid var(--rule);
+  border-radius:5px;
+  padding:9px 11px 10px;
+  box-shadow:0 1px 0 rgba(36,32,29,.05),0 2px 6px rgba(36,32,29,.05);
+  color:var(--ink);
+}
+.n .role{
+  display:block;
+  font-family:var(--font-mono);font-size:8px;letter-spacing:.15em;
+  text-transform:uppercase;margin-bottom:5px;font-weight:500;
+}
+.n .lbl{font-size:12px;line-height:1.32;font-weight:500;text-wrap:balance}
+.n ul{margin:7px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px}
+.n li{
+  font-size:10.5px;line-height:1.35;color:var(--muted);
+  padding-left:9px;position:relative;
+}
+.n li::before{
+  content:"";position:absolute;left:0;top:.52em;
+  width:4px;height:1px;background:var(--rule);
+}
+.n .ext{
+  display:inline-block;margin-top:8px;
+  font-family:var(--font-mono);font-size:7.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:#8A6A3A;
+  border:1px solid #E0CFA8;background:#FBF4E4;
+  border-radius:3px;padding:2px 5px;
+}
+
+.n-start{
+  background:#EAF2EE;border-color:#9DBFB0;border-radius:22px;
+  padding:11px 16px;
+}
+.n-end{
+  background:var(--ink);border-color:var(--ink);color:var(--card);
+  border-radius:22px;padding:11px 16px;
+}
+.n-end .lbl{color:var(--card)}
+
+.n-decision{
+  background:#FBF3DC;border-color:#C9A24B;
+  clip-path:polygon(13px 0,calc(100% - 13px) 0,100% 13px,100% calc(100% - 13px),
+    calc(100% - 13px) 100%,13px 100%,0 calc(100% - 13px),0 13px);
+  padding:12px 15px;box-shadow:none;
+}
+.n-decision .lbl::before{content:"◆  ";color:#A47C1B;font-size:9px;vertical-align:2px}
+
+.n-note{
+  background:var(--info-bg);border:1px dashed var(--info);
+  box-shadow:none;
+}
+.n-note .tag{
+  display:block;font-family:var(--font-mono);font-size:8px;
+  letter-spacing:.15em;text-transform:uppercase;
+  margin-bottom:5px;font-weight:500;color:var(--info);
+}
+.n-note .lbl{font-weight:500;font-size:11.5px}
+.n-note li::before{background:currentColor;opacity:.35}
+.n-note.warn{background:var(--warn-bg);border-color:var(--warn);color:#5C2416}
+.n-note.warn .tag{color:var(--warn)}
+.n-note.warn li{color:#7A3B2A}
+.n-note.success{background:var(--success-bg);border-color:var(--success)}
+.n-note.success .tag{color:var(--success)}
+
+/* ---------- edge labels ---------- */
+.elabel{
+  position:absolute;transform:translate(-50%,-50%);
+  font-family:var(--font-mono);font-size:9px;letter-spacing:.05em;
+  background:var(--paper);color:#4A423B;
+  border:1px solid var(--rule);border-radius:3px;
+  padding:2px 6px;white-space:nowrap;pointer-events:none;
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+
+@media (max-width:820px){
+  .rail{display:none}
+  .brand h1{font-size:16px}
+  .eyebrow,.counts{display:none}
+}
+
+/* ================= edit mode ================= */
+.btn.on{background:#8A6A2A;border-color:#C9A24B;color:#FFF7E4}
+.viewport.linking{cursor:crosshair}
+.n.editable{cursor:move}
+.n.sel{outline:2px solid #E8B23C;outline-offset:3px}
+.n.linksrc{outline:2px dashed #1E5F4B;outline-offset:3px}
+.ehit{stroke:transparent;stroke-width:14;fill:none;pointer-events:stroke;cursor:pointer}
+.epath.sel{stroke:#E8B23C!important;stroke-width:3!important}
+
+.inspector{
+  width:298px;flex:0 0 298px;background:var(--chrome);
+  border-left:1px solid var(--chrome-line);
+  overflow-y:auto;padding:16px 16px 40px;
+}
+.inspector h2{
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--chrome-muted);margin:0 0 4px;font-weight:500;
+}
+.insp-id{
+  font-family:var(--font-mono);font-size:10px;color:#7E756A;
+  margin-bottom:16px;word-break:break-all;
+}
+.fld{margin-bottom:13px}
+.fld label{
+  display:block;font-family:var(--font-mono);font-size:9px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--chrome-muted);margin-bottom:5px;
+}
+.fld input[type=text],.fld textarea,.fld select{
+  width:100%;background:#141312;color:var(--chrome-ink);
+  border:1px solid var(--chrome-line);border-radius:4px;
+  padding:7px 8px;font-family:var(--font-sans);font-size:12px;line-height:1.4;
+}
+.fld textarea{resize:vertical;min-height:56px}
+.fld input:focus,.fld textarea:focus,.fld select:focus{
+  outline:none;border-color:#C9A24B;
+}
+.fld.row{display:flex;align-items:center;gap:8px}
+.fld.row label{margin:0;text-transform:none;letter-spacing:.03em;font-size:11px;font-family:var(--font-sans);color:var(--chrome-ink)}
+.fld.row input[type=checkbox]{width:auto;accent-color:#C9A24B}
+.insp-actions{display:flex;gap:6px;margin-top:18px}
+.btn.danger{border-color:#7A3428;color:#E8A092}
+.btn.danger:hover{background:#3A1D18}
+.btn.wide{flex:1;text-align:center}
+.hint{font-size:11px;line-height:1.5;color:var(--chrome-muted)}
+.hint b{color:var(--chrome-ink);font-weight:500}
+.hint code{
+  font-family:var(--font-mono);font-size:10px;background:#141312;
+  border:1px solid var(--chrome-line);border-radius:3px;padding:1px 4px;
+}
+
+.modal{
+  position:fixed;inset:0;background:rgba(10,9,8,.72);
+  display:flex;align-items:center;justify-content:center;z-index:50;padding:32px;
+}
+.modal[hidden]{display:none}
+.modal-box{
+  background:var(--chrome);border:1px solid var(--chrome-line);border-radius:8px;
+  width:min(760px,100%);max-height:100%;display:flex;flex-direction:column;padding:20px;
+}
+.modal-box h3{
+  font-family:var(--font-display);font-size:18px;font-weight:500;
+  margin:0 0 6px;color:var(--chrome-ink);
+}
+.modal-box p{margin:0 0 14px;font-size:12px;line-height:1.55;color:var(--chrome-muted)}
+.modal-box textarea{
+  flex:1;min-height:280px;background:#141312;color:#CFC7BB;
+  border:1px solid var(--chrome-line);border-radius:5px;padding:11px;
+  font-family:var(--font-mono);font-size:11px;line-height:1.5;resize:none;
+}
+.modal-actions{display:flex;gap:7px;margin-top:14px;justify-content:flex-end}
+
+/* ================= scrollbars ================= */
+.sbar{
+  position:absolute;z-index:6;
+  background:rgba(36,32,29,.05);
+  border:0 solid rgba(36,32,29,.12);
+}
+.sbar[hidden]{display:none}
+.sbar-v{top:0;right:0;bottom:15px;width:15px;border-left-width:1px;cursor:default}
+.sbar-h{left:0;right:15px;bottom:0;height:15px;border-top-width:1px;cursor:default}
+.sthumb{
+  position:absolute;border-radius:8px;
+  background:#9A9184;border:1px solid rgba(36,32,29,.18);
+  cursor:grab;
+}
+.sthumb:hover{background:#7C7367}
+.sthumb.drag{background:#544D45;cursor:grabbing}
+.sbar-v .sthumb{left:3px;right:3px;min-height:32px}
+.sbar-h .sthumb{top:3px;bottom:3px;min-width:32px}
+.sbar-corner{
+  position:absolute;right:0;bottom:0;width:15px;height:15px;z-index:6;
+  background:rgba(36,32,29,.05);
+  border-left:1px solid rgba(36,32,29,.12);
+  border-top:1px solid rgba(36,32,29,.12);
+}
+.sbar-corner[hidden]{display:none}
+
+.railhint{
+  margin:12px 0 0;text-align:center;
+  font-size:10.5px;line-height:1.6;color:var(--chrome-muted);
+}
+.railhint b{
+  font-family:var(--font-mono);font-size:9.5px;color:var(--chrome-ink);
+  border:1px solid var(--chrome-line);border-radius:3px;padding:1px 4px;font-weight:500;
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="eyebrow">Field Visit · Front Desk Research</span>
+      <h1>Elssy Hospital</h1>
+    </div>
+    <div class="counts" id="counts"></div>
+    <div class="tools" id="editTools" hidden>
+      <button class="btn" id="addnode" type="button">New card</button>
+      <button class="btn" id="undo" type="button">Undo</button>
+      <button class="btn" id="export" type="button">Export JSON</button>
+      <button class="btn" id="savehtml" type="button">Save copy</button>
+    </div>
+    <div class="tools">
+      <button class="btn" id="edit" type="button">Edit</button>
+      <button class="btn" id="top" type="button">Top</button>
+      <button class="btn" id="fit" type="button">Fit all</button>
+      <button class="btn" id="zout" type="button">&minus;</button>
+      <button class="btn" id="zin" type="button">+</button>
+    </div>
+  </header>
+  <div class="main">
+    <aside class="rail">
+      <section>
+        <h2>Jump to phase</h2>
+        <div class="phase-list" id="phaseList"></div>
+      </section>
+      <section>
+        <h2>Who does it</h2>
+        <div class="legend" id="legendRoles"></div>
+      </section>
+      <section>
+        <h2>Node types</h2>
+        <div class="legend">
+          <div><span class="sq" style="border-color:#9DBFB0;background:#EAF2EE"></span>Start</div>
+          <div><span class="sq end"></span>End</div>
+          <div><span class="sq dec"></span>Decision</div>
+          <div><span class="sq"></span>Step</div>
+          <div><span class="sq gap"></span>Gap</div>
+          <div><span class="sq" style="border-style:dashed;border-color:#3D5580"></span>Note</div>
+        </div>
+      </section>
+      <section>
+        <h2>Overview</h2>
+        <div class="minimap-wrap">
+          <div class="minimap"><canvas id="mm"></canvas><div class="mm-view" id="mmView"></div></div>
+        </div>
+        <p class="railhint">Scroll to move up and down<br><b>Shift</b> + scroll to move sideways<br><b>Ctrl</b> + scroll to zoom</p>
+      </section>
+    </aside>
+    <div class="viewport" id="vp">
+      <div class="canvas" id="canvas">
+        <div class="layer" id="bands"></div>
+        <svg class="layer" id="edges" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div class="layer" id="labels"></div>
+        <div class="layer" id="nodes"></div>
+      </div>
+      <div class="sbar sbar-v" id="sbv"><div class="sthumb" id="sbvt"></div></div>
+      <div class="sbar sbar-h" id="sbh"><div class="sthumb" id="sbht"></div></div>
+      <div class="sbar-corner" id="sbc"></div>
+    </div>
+    <aside class="inspector" id="inspector" hidden></aside>
+  </div>
+</div>
+<div class="modal" id="modal" hidden>
+  <div class="modal-box">
+    <h3 id="mTitle"></h3>
+    <p id="mNote"></p>
+    <textarea id="mText" readonly spellcheck="false"></textarea>
+    <div class="modal-actions">
+      <button class="btn" id="mCopy" type="button">Copy</button>
+      <button class="btn" id="mDownload" type="button">Download</button>
+      <button class="btn" id="mClose" type="button">Close</button>
+    </div>
+  </div>
+</div>
+<script>const FLOW_CONFIG={"roleColor":{"reception":"#C96A4A","doctor":"#2E4A7B","lab":"#A47C1B","patient":"#2F7D7B","pharmacy":"#6E4B8E","system":"#3B3B3B","partner":"#1E5F4B"},"roleName":{"reception":"Front Desk","doctor":"Doctor","lab":"Lab Desk","patient":"Patient","pharmacy":"Pharmacy","system":"Eka Care","partner":"Partner"},"prefix":[["ref-r","ph-r"],["sch-","ph-1"],["arr-","ph-2"],["reg-","ph-3"],["que-","ph-4"],["con-","ph-5"],["pha-","ph-6"],["inv-","ph-7"],["scn-","ph-8"],["fup-","ph-9"],["lab-","ph-s1"],["ipd-","ph-s2"]]};</script>
+<script id="flowdata">const FLOW_DATA={
+  "nodes": [
+    {
+      "id": "ph-1",
+      "type": "phase",
+      "position": {
+        "x": 10,
+        "y": 0
+      },
+      "data": {
+        "label": "01 · Daily Doctor Confirmation (before clinic)",
+        "owner": "Front Desk / Doctor",
+        "accent": "#DCE4F3",
+        "stroke": "#2E4A7B"
+      }
+    },
+    {
+      "id": "ph-2",
+      "type": "phase",
+      "position": {
+        "x": 10,
+        "y": 620
+      },
+      "data": {
+        "label": "02 · Patient Arrival & Paper Register",
+        "owner": "Front Desk / Patient",
+        "accent": "#FBE8DE",
+        "stroke": "#C96A4A"
+      }
+    },
+    {
+      "id": "ph-3",
+      "type": "phase",
+      "position": {
+        "x": 10,
+        "y": 1330
+      },
+      "data": {
+        "label": "03 · Registration & UHID in Eka Care",
+        "owner": "Front Desk",
+        "accent": "#FBE8DE",
+        "stroke": "#C96A4A"
+      }
+    },
+    {
+      "id": "ph-4",
+      "type": "phase",
+      "position": {
+        "x": 10,
+        "y": 2530
+      },
+      "data": {
+        "label": "04 · Queue, Check-in & Tagging",
+        "owner": "Front Desk / Doctor",
+        "accent": "#FBE8DE",
+        "stroke": "#C96A4A"
+      }
+    },
+    {
+      "id": "ph-5",
+      "type": "phase",
+      "position": {
+        "x": 10,
+        "y": 3560
+      },
+      "data": {
+        "label": "05 · Doctor Consultation (paper Rx)",
+        "owner": "Doctor",
+        "accent": "#DCE4F3",
+        "stroke": "#2E4A7B"
+      }
+    },
+    {
+      "id": "ph-6",
+      "type": "phase",
+      "position": {
+        "x": 10,
+        "y": 4400
+      },
+      "data": {
+        "label": "06 · Pharmacy (eVitals)",
+        "owner": "Pharmacy",
+        "accent": "#EAE1F2",
+        "stroke": "#6E4B8E"
+      }
+    },
+    {
+      "id": "ph-7",
+      "type": "phase",
+      "position": {
+        "x": 10,
+        "y": 5180
+      },
+      "data": {
+        "label": "07 · Invoicing & Payment",
+        "owner": "Front Desk / Patient",
+        "accent": "#FBE8DE",
+        "stroke": "#C96A4A"
+      }
+    },
+    {
+      "id": "ph-8",
+      "type": "phase",
+      "position": {
+        "x": 10,
+        "y": 6180
+      },
+      "data": {
+        "label": "08 · Prescription Scanned Back into Records",
+        "owner": "Front Desk",
+        "accent": "#FBE8DE",
+        "stroke": "#C96A4A"
+      }
+    },
+    {
+      "id": "ph-9",
+      "type": "phase",
+      "position": {
+        "x": 10,
+        "y": 6960
+      },
+      "data": {
+        "label": "09 · Follow-up & Patient Messaging",
+        "owner": "Front Desk / Eka Care",
+        "accent": "#FBE8DE",
+        "stroke": "#C96A4A"
+      }
+    },
+    {
+      "id": "ph-s1",
+      "type": "phase",
+      "position": {
+        "x": 1150,
+        "y": 3560
+      },
+      "data": {
+        "label": "S1 · Lab & Diagnostics (parallel)",
+        "owner": "Lab Desk · Bioline",
+        "accent": "#F5EACB",
+        "stroke": "#A47C1B",
+        "compact": true
+      }
+    },
+    {
+      "id": "ph-s2",
+      "type": "phase",
+      "position": {
+        "x": 1150,
+        "y": 5180
+      },
+      "data": {
+        "label": "S2 · IPD & Cashless Admissions (parallel)",
+        "owner": "Front Desk · Partners",
+        "accent": "#D6EAE0",
+        "stroke": "#1E5F4B",
+        "compact": true
+      }
+    },
+    {
+      "id": "ph-r",
+      "type": "phase",
+      "position": {
+        "x": 10,
+        "y": 7800
+      },
+      "data": {
+        "label": "R · Registers, Templates & Tools (off-flow reference)",
+        "owner": "All desks",
+        "accent": "#EDEAE3",
+        "stroke": "#5B5550",
+        "compact": true
+      }
+    },
+    {
+      "id": "sch-start",
+      "type": "start",
+      "position": {
+        "x": 50,
+        "y": 100
+      },
+      "data": {
+        "label": "Start of day at Elssy Hospital",
+        "role": "reception"
+      }
+    },
+    {
+      "id": "sch-call",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 230
+      },
+      "data": {
+        "label": "Front desk calls each doctor to confirm today's availability",
+        "role": "reception",
+        "items": [
+          "3 senior doctors who head the hospital",
+          "3 visiting consultation doctors",
+          "Schedules are fixed, but confirmed every single day"
+        ]
+      }
+    },
+    {
+      "id": "sch-gap-nobook",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 100
+      },
+      "data": {
+        "label": "Gap: there is no booking system to publish availability into",
+        "tone": "warn",
+        "items": [
+          "No online booking",
+          "No pre-booking",
+          "No call-centre booking",
+          "Every patient is a walk-in check-in"
+        ]
+      }
+    },
+    {
+      "id": "sch-note-off",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 330
+      },
+      "data": {
+        "label": "Online booking is switched off on purpose",
+        "tone": "info",
+        "items": [
+          "Most patients come from villages",
+          "Doctors say patients are not familiar with online booking"
+        ]
+      }
+    },
+    {
+      "id": "arr-arrive",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 720
+      },
+      "data": {
+        "label": "Patient walks in · no appointment",
+        "role": "patient"
+      }
+    },
+    {
+      "id": "arr-book",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 850
+      },
+      "data": {
+        "label": "Front desk writes the patient into the physical register book",
+        "role": "reception",
+        "items": [
+          "Name",
+          "Mobile Number",
+          "Age"
+        ]
+      }
+    },
+    {
+      "id": "arr-ask",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 1060
+      },
+      "data": {
+        "label": "Staff ask which consultant and the purpose of the visit",
+        "role": "reception"
+      }
+    },
+    {
+      "id": "arr-note-profile",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 720
+      },
+      "data": {
+        "label": "Who the patients are",
+        "tone": "info",
+        "items": [
+          "Most come from surrounding villages",
+          "Limited access to information",
+          "Everything has to be explained and handled manually"
+        ]
+      }
+    },
+    {
+      "id": "arr-gap-paper",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 950
+      },
+      "data": {
+        "label": "Gap: the first record of every patient is on paper",
+        "tone": "warn",
+        "items": [
+          "Written in a book before anything reaches Eka Care"
+        ]
+      }
+    },
+    {
+      "id": "reg-new",
+      "type": "decision",
+      "position": {
+        "x": 50,
+        "y": 1430
+      },
+      "data": {
+        "label": "New or existing patient?",
+        "role": "reception"
+      }
+    },
+    {
+      "id": "reg-create",
+      "type": "step",
+      "position": {
+        "x": -320,
+        "y": 1590
+      },
+      "data": {
+        "label": "Create the patient ID in Eka Care",
+        "role": "reception",
+        "items": [
+          "UHID generated here"
+        ]
+      }
+    },
+    {
+      "id": "reg-search",
+      "type": "step",
+      "position": {
+        "x": 420,
+        "y": 1590
+      },
+      "data": {
+        "label": "Search the patient by mobile number",
+        "role": "reception"
+      }
+    },
+    {
+      "id": "reg-addnum",
+      "type": "step",
+      "position": {
+        "x": 420,
+        "y": 1740
+      },
+      "data": {
+        "label": "Number missing · added to the patient's record",
+        "role": "reception"
+      }
+    },
+    {
+      "id": "reg-fup",
+      "type": "step",
+      "position": {
+        "x": 420,
+        "y": 1880
+      },
+      "data": {
+        "label": "Number found · continue in the same record as the next follow-up",
+        "role": "reception"
+      }
+    },
+    {
+      "id": "reg-form",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 2060
+      },
+      "data": {
+        "label": "Pre-printed pharmacy prescription page filled in",
+        "role": "reception",
+        "items": [
+          "Patient name · UHID",
+          "Age · Mobile number",
+          "Blank area for the doctor to write in"
+        ]
+      }
+    },
+    {
+      "id": "reg-send",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 2280
+      },
+      "data": {
+        "label": "Patient sent to the doctor holding the form",
+        "role": "patient"
+      }
+    },
+    {
+      "id": "reg-note-eka",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 1590
+      },
+      "data": {
+        "label": "This is where Eka Care first touches the visit",
+        "tone": "info",
+        "items": [
+          "Eka Care runs in only five places: front desk,",
+          "lab, invoicing, pharmacy billing and one doctor"
+        ]
+      }
+    },
+    {
+      "id": "reg-gap-mr",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 1790
+      },
+      "data": {
+        "label": "Gap: medical reports are not uploaded during the visit",
+        "tone": "warn",
+        "items": [
+          "Mostly uploaded in a batch at the end of the month"
+        ]
+      }
+    },
+    {
+      "id": "que-walk",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 2630
+      },
+      "data": {
+        "label": "Patient entered as a walk-in in Eka Care",
+        "role": "reception"
+      }
+    },
+    {
+      "id": "que-rush",
+      "type": "decision",
+      "position": {
+        "x": 50,
+        "y": 2760
+      },
+      "data": {
+        "label": "Is it rush hour?",
+        "role": "reception"
+      }
+    },
+    {
+      "id": "que-wait",
+      "type": "step",
+      "position": {
+        "x": -320,
+        "y": 2920
+      },
+      "data": {
+        "label": "Patient asked to wait, then entered directly as a walk-in",
+        "role": "reception"
+      }
+    },
+    {
+      "id": "que-normal",
+      "type": "step",
+      "position": {
+        "x": 420,
+        "y": 2920
+      },
+      "data": {
+        "label": "Entered straight away",
+        "role": "reception"
+      }
+    },
+    {
+      "id": "que-tag",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 3080
+      },
+      "data": {
+        "label": "Front desk applies a tag from the doctor's account",
+        "role": "reception",
+        "items": [
+          "Second Opinion · Day Care",
+          "Emergency · Follow-up"
+        ]
+      }
+    },
+    {
+      "id": "que-doc-list",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 3280
+      },
+      "data": {
+        "label": "Doctor opens Eka Care to check the patient list and queue",
+        "role": "doctor",
+        "items": [
+          "Dr. Tinu George only",
+          "Used for the list and queue, nothing else"
+        ]
+      }
+    },
+    {
+      "id": "que-gap-booked",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 2630
+      },
+      "data": {
+        "label": "Gap: the Booked Appointment option is unused",
+        "tone": "warn",
+        "items": [
+          "Every patient is a check-in",
+          "Nothing is ever booked ahead"
+        ]
+      }
+    },
+    {
+      "id": "que-gap-queue",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 2830
+      },
+      "data": {
+        "label": "Gap: Custom Queue was misunderstood",
+        "tone": "warn",
+        "items": [
+          "Staff did not know the Filter options must be selected",
+          "Follow-up · Booked · Inpatient · Incomplete · Completed",
+          "The option they wanted never appeared",
+          "Explained on site by Sher"
+        ]
+      }
+    },
+    {
+      "id": "que-gap-account",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 3080
+      },
+      "data": {
+        "label": "Gap: front desk works inside the doctors' accounts",
+        "tone": "warn",
+        "items": [
+          "They have their own seats but prefer the doctor login",
+          "It gives them more access, including tagging"
+        ]
+      }
+    },
+    {
+      "id": "que-note-chatbot",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 3300
+      },
+      "data": {
+        "label": "The AI chatbot is used regularly",
+        "tone": "info"
+      }
+    },
+    {
+      "id": "con-see",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 3660
+      },
+      "data": {
+        "label": "Patient sees the doctor with the printed form",
+        "role": "patient"
+      }
+    },
+    {
+      "id": "con-write",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 3790
+      },
+      "data": {
+        "label": "Doctor writes the prescription by hand on the same page",
+        "role": "doctor"
+      }
+    },
+    {
+      "id": "con-send",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 3930
+      },
+      "data": {
+        "label": "Prescription handed to the patient for the pharmacy",
+        "role": "doctor"
+      }
+    },
+    {
+      "id": "con-gap-rx",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 3660
+      },
+      "data": {
+        "label": "Gap: doctors do not use Eka Care for Rx",
+        "tone": "warn",
+        "items": [
+          "They find print · medical report · attach prescription too difficult",
+          "In Eka Care the report does not need re-uploading if the Rx comes from it",
+          "They are simply used to the older paper workflow"
+        ]
+      }
+    },
+    {
+      "id": "con-note-village",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 3920
+      },
+      "data": {
+        "label": "Patients prefer handwriting",
+        "tone": "info",
+        "items": [
+          "Village patients want the doctor to write on paper",
+          "If nothing is written by hand, patients feel the doctor did little work"
+        ]
+      }
+    },
+    {
+      "id": "con-gap-fup",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 4130
+      },
+      "data": {
+        "label": "Gap: follow-ups cannot be recorded",
+        "tone": "warn",
+        "items": [
+          "Follow-ups live in the Rx section, which is unused",
+          "A Follow-up tag exists but only the tag shows in My OPD",
+          "Tagging itself is not used properly either"
+        ]
+      }
+    },
+    {
+      "id": "pha-read",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 4500
+      },
+      "data": {
+        "label": "Pharmacy reads the handwritten prescription",
+        "role": "pharmacy"
+      }
+    },
+    {
+      "id": "pha-search",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 4630
+      },
+      "data": {
+        "label": "Medicines searched and added by hand in eVitals",
+        "role": "pharmacy",
+        "integration": true
+      }
+    },
+    {
+      "id": "pha-bill",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 4770
+      },
+      "data": {
+        "label": "Separate pharmacy bill generated in eVitals",
+        "role": "pharmacy"
+      }
+    },
+    {
+      "id": "pha-total",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 4900
+      },
+      "data": {
+        "label": "Pharmacy total typed into the Pharmacy section of the Eka Care bill",
+        "role": "reception"
+      }
+    },
+    {
+      "id": "pha-gap-int",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 4620
+      },
+      "data": {
+        "label": "Gap: staff are unaware of the eVitals integration with Eka Care",
+        "tone": "warn",
+        "items": [
+          "The two systems are run completely separately",
+          "Every medicine is searched and re-entered by hand"
+        ]
+      }
+    },
+    {
+      "id": "inv-bill",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 5280
+      },
+      "data": {
+        "label": "Final bill generated in Eka Care",
+        "role": "reception",
+        "items": [
+          "Consultation · Pharmacy total",
+          "Lab and other services"
+        ]
+      }
+    },
+    {
+      "id": "inv-pay",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 5470
+      },
+      "data": {
+        "label": "Patient pays",
+        "role": "patient"
+      }
+    },
+    {
+      "id": "inv-gap-dues",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 5280
+      },
+      "data": {
+        "label": "Gap: dues are counted twice in analytics",
+        "tone": "warn",
+        "items": [
+          "₹15,000 bill with ₹100 left due",
+          "On the next payment the old ₹100 is added again",
+          "It keeps compounding and distorts the totals"
+        ]
+      }
+    },
+    {
+      "id": "inv-gap-grow",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 5510
+      },
+      "data": {
+        "label": "Gap: old payments grow on their own",
+        "tone": "warn",
+        "items": [
+          "After about three days, older payments increase in the analytics report",
+          "The hospital does not know why"
+        ]
+      }
+    },
+    {
+      "id": "inv-gap-adv",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 5720
+      },
+      "data": {
+        "label": "Gap: no proper advance payment option for IPD",
+        "tone": "warn",
+        "items": [
+          "Advances paid by admitted patients cannot be entered cleanly"
+        ]
+      }
+    },
+    {
+      "id": "inv-req-tmpl",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 5900
+      },
+      "data": {
+        "label": "Request from the hospital",
+        "tone": "info",
+        "items": [
+          "A customisable bill template, the way an Rx template can be built",
+          "So the bill format matches their own requirements"
+        ]
+      }
+    },
+    {
+      "id": "scn-return",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 6280
+      },
+      "data": {
+        "label": "Prescription comes back to the front desk",
+        "role": "reception"
+      }
+    },
+    {
+      "id": "scn-scan",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 6410
+      },
+      "data": {
+        "label": "Scanned on the HP scanner using HP Scan software",
+        "role": "reception",
+        "integration": true
+      }
+    },
+    {
+      "id": "scn-save",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 6550
+      },
+      "data": {
+        "label": "File downloaded and saved under the patient's name",
+        "role": "reception"
+      }
+    },
+    {
+      "id": "scn-upload",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 6680
+      },
+      "data": {
+        "label": "Image added to the patient's Medical Records in Eka Care",
+        "role": "reception"
+      }
+    },
+    {
+      "id": "scn-gap-naming",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 6480
+      },
+      "data": {
+        "label": "Gap: there is no standard for saving the scans",
+        "tone": "warn",
+        "items": [
+          "Repeat patient names simply get 1 or 2 appended",
+          "No organised folder structure on the computer",
+          "Files become hard to find later"
+        ]
+      }
+    },
+    {
+      "id": "fup-msg",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 7060
+      },
+      "data": {
+        "label": "Follow-up WhatsApp message sent through Eka Care",
+        "role": "system",
+        "integration": true
+      }
+    },
+    {
+      "id": "fup-free",
+      "type": "step",
+      "position": {
+        "x": 50,
+        "y": 7200
+      },
+      "data": {
+        "label": "Follow-up visits are free",
+        "role": "reception",
+        "items": [
+          "Free for the first 5 days",
+          "The next 5-day period also counts as follow-up"
+        ]
+      }
+    },
+    {
+      "id": "fup-end",
+      "type": "end",
+      "position": {
+        "x": 50,
+        "y": 7400
+      },
+      "data": {
+        "label": "Visit closed"
+      }
+    },
+    {
+      "id": "fup-gap-updates",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 7060
+      },
+      "data": {
+        "label": "Gap: Eka Care update notifications never reach them",
+        "tone": "warn",
+        "items": [
+          "New features stay unknown",
+          "They often do not realise something has changed"
+        ]
+      }
+    },
+    {
+      "id": "fup-gap-price",
+      "type": "note",
+      "position": {
+        "x": 780,
+        "y": 7270
+      },
+      "data": {
+        "label": "Pricing objection raised",
+        "tone": "warn",
+        "items": [
+          "Eka Care is about ₹8,000 per IPD bed",
+          "They compare this with Narayana at about ₹800",
+          "Willing to continue if the price is relaxed"
+        ]
+      }
+    },
+    {
+      "id": "lab-order",
+      "type": "step",
+      "position": {
+        "x": 1150,
+        "y": 3660
+      },
+      "data": {
+        "label": "Doctor advises a test on the paper prescription",
+        "role": "doctor"
+      }
+    },
+    {
+      "id": "lab-type",
+      "type": "decision",
+      "position": {
+        "x": 1150,
+        "y": 3790
+      },
+      "data": {
+        "label": "Lab test or imaging?",
+        "role": "lab"
+      }
+    },
+    {
+      "id": "lab-imaging",
+      "type": "step",
+      "position": {
+        "x": 1560,
+        "y": 3950
+      },
+      "data": {
+        "label": "X-ray, ECG or CT scan in its own cabin",
+        "role": "lab"
+      }
+    },
+    {
+      "id": "lab-collect",
+      "type": "step",
+      "position": {
+        "x": 1150,
+        "y": 3950
+      },
+      "data": {
+        "label": "Sample collected at the lab desk",
+        "role": "lab"
+      }
+    },
+    {
+      "id": "lab-bioline",
+      "type": "step",
+      "position": {
+        "x": 1150,
+        "y": 4080
+      },
+      "data": {
+        "label": "Bioline agent collects the samples",
+        "role": "partner",
+        "items": [
+          "12:30 PM to 2:30 PM, and again in the evening",
+          "Every day except Sunday, when they come once",
+          "Coordinated on WhatsApp · results returned by email"
+        ],
+        "integration": true
+      }
+    },
+    {
+      "id": "lab-template",
+      "type": "step",
+      "position": {
+        "x": 1150,
+        "y": 4310
+      },
+      "data": {
+        "label": "Readings typed into the hospital's own Word template",
+        "role": "lab"
+      }
+    },
+    {
+      "id": "lab-download",
+      "type": "step",
+      "position": {
+        "x": 1150,
+        "y": 4440
+      },
+      "data": {
+        "label": "Completed report downloaded under the patient's name",
+        "role": "lab"
+      }
+    },
+    {
+      "id": "lab-upload",
+      "type": "step",
+      "position": {
+        "x": 1150,
+        "y": 4570
+      },
+      "data": {
+        "label": "Uploaded into Eka Care Medical Records",
+        "role": "lab",
+        "items": [
+          "Search the patient by UHID",
+          "Medical Records → Upload / Create Lab Report"
+        ]
+      }
+    },
+    {
+      "id": "lab-wa",
+      "type": "step",
+      "position": {
+        "x": 1150,
+        "y": 4760
+      },
+      "data": {
+        "label": "Report also sent to the patient on WhatsApp",
+        "role": "system",
+        "integration": true
+      }
+    },
+    {
+      "id": "lab-end",
+      "type": "end",
+      "position": {
+        "x": 1150,
+        "y": 4900
+      },
+      "data": {
+        "label": "Diagnostics complete"
+      }
+    },
+    {
+      "id": "lab-note-second",
+      "type": "note",
+      "position": {
+        "x": 1960,
+        "y": 3660
+      },
+      "data": {
+        "label": "The lab desk runs its own Eka Care login",
+        "tone": "info",
+        "items": [
+          "Used almost entirely to upload lab reports"
+        ]
+      }
+    },
+    {
+      "id": "lab-gap-template",
+      "type": "note",
+      "position": {
+        "x": 1960,
+        "y": 4310
+      },
+      "data": {
+        "label": "Gap: lab reports are built in Word, not Eka Care",
+        "tone": "warn",
+        "items": [
+          "Readings typed into their own template",
+          "Then downloaded and re-uploaded as a file"
+        ]
+      }
+    },
+    {
+      "id": "ipd-source",
+      "type": "step",
+      "position": {
+        "x": 1150,
+        "y": 5280
+      },
+      "data": {
+        "label": "Admission request arrives from a partner platform",
+        "role": "partner",
+        "items": [
+          "MediBuddy · Sam Health",
+          "Hexa · Pristyn Care",
+          "Received in WhatsApp groups"
+        ],
+        "integration": true
+      }
+    },
+    {
+      "id": "ipd-cash",
+      "type": "step",
+      "position": {
+        "x": 1150,
+        "y": 5510
+      },
+      "data": {
+        "label": "Cashless treatment · the platform pays, not the patient",
+        "role": "partner"
+      }
+    },
+    {
+      "id": "ipd-admit",
+      "type": "step",
+      "position": {
+        "x": 1150,
+        "y": 5640
+      },
+      "data": {
+        "label": "Patient admitted",
+        "role": "reception",
+        "items": [
+          "7 IPD beds in total"
+        ]
+      }
+    },
+    {
+      "id": "ipd-board",
+      "type": "step",
+      "position": {
+        "x": 1150,
+        "y": 5810
+      },
+      "data": {
+        "label": "Patient written onto the IPD whiteboard",
+        "role": "reception",
+        "items": [
+          "Day · Today's date · Room number",
+          "UHID · Patient name · Age · Gender",
+          "Checked and updated daily"
+        ]
+      }
+    },
+    {
+      "id": "ipd-bill",
+      "type": "step",
+      "position": {
+        "x": 1150,
+        "y": 6050
+      },
+      "data": {
+        "label": "IPD billing handled in Eka Care",
+        "role": "reception"
+      }
+    },
+    {
+      "id": "ipd-end",
+      "type": "end",
+      "position": {
+        "x": 1150,
+        "y": 6190
+      },
+      "data": {
+        "label": "Discharge"
+      }
+    },
+    {
+      "id": "ipd-note-practo",
+      "type": "note",
+      "position": {
+        "x": 1960,
+        "y": 5280
+      },
+      "data": {
+        "label": "Practo is not used",
+        "tone": "info",
+        "items": [
+          "The hospital does not prefer it"
+        ]
+      }
+    },
+    {
+      "id": "ipd-gap-adv",
+      "type": "note",
+      "position": {
+        "x": 1960,
+        "y": 5810
+      },
+      "data": {
+        "label": "Gap: advance payments cannot be recorded properly",
+        "tone": "warn",
+        "items": [
+          "No proper advance payment option for IPD in Eka Care"
+        ]
+      }
+    },
+    {
+      "id": "ipd-gap-board",
+      "type": "note",
+      "position": {
+        "x": 1960,
+        "y": 6010
+      },
+      "data": {
+        "label": "Gap: the in-patient list lives on a whiteboard",
+        "tone": "warn",
+        "items": [
+          "Maintained by hand, wiped and rewritten daily",
+          "Nothing outside the room can see it"
+        ]
+      }
+    },
+    {
+      "id": "ref-r1",
+      "type": "note",
+      "position": {
+        "x": 50,
+        "y": 7900
+      },
+      "data": {
+        "label": "Front Desk Paper Register (the book)",
+        "tone": "info",
+        "items": [
+          "Name",
+          "Mobile Number",
+          "Age",
+          "(Filled before anything is entered into Eka Care)"
+        ]
+      }
+    },
+    {
+      "id": "ref-r2",
+      "type": "note",
+      "position": {
+        "x": 560,
+        "y": 7900
+      },
+      "data": {
+        "label": "IPD Whiteboard",
+        "tone": "info",
+        "items": [
+          "Day",
+          "Today's Date",
+          "Room Number",
+          "UHID",
+          "Patient Name",
+          "Age",
+          "Gender",
+          "(Rewritten by hand every day)"
+        ]
+      }
+    },
+    {
+      "id": "ref-r3",
+      "type": "note",
+      "position": {
+        "x": 1070,
+        "y": 7900
+      },
+      "data": {
+        "label": "Pre-printed Pharmacy Prescription Page",
+        "tone": "info",
+        "items": [
+          "Patient Name",
+          "UHID",
+          "Age",
+          "Mobile Number",
+          "Blank area the doctor writes the prescription into"
+        ]
+      }
+    },
+    {
+      "id": "ref-r4",
+      "type": "note",
+      "position": {
+        "x": 1580,
+        "y": 7900
+      },
+      "data": {
+        "label": "Tags currently in use",
+        "tone": "info",
+        "items": [
+          "Second Opinion",
+          "Day Care",
+          "Emergency",
+          "Follow-up",
+          "(Applied from the doctor's account)"
+        ]
+      }
+    },
+    {
+      "id": "ref-r5",
+      "type": "note",
+      "position": {
+        "x": 50,
+        "y": 8330
+      },
+      "data": {
+        "label": "Custom Queue filters (the ones that were missed)",
+        "tone": "info",
+        "items": [
+          "Follow-up",
+          "Booked",
+          "Inpatient",
+          "Incomplete",
+          "Completed",
+          "(All must be selected for the queue to appear)"
+        ]
+      }
+    },
+    {
+      "id": "ref-r6",
+      "type": "note",
+      "position": {
+        "x": 560,
+        "y": 8330
+      },
+      "data": {
+        "label": "Lab Report Word Template",
+        "tone": "info",
+        "items": [
+          "Hospital's own template, not an Eka Care format",
+          "Readings and details typed in",
+          "Downloaded under the patient's name",
+          "Re-uploaded into Medical Records"
+        ]
+      }
+    },
+    {
+      "id": "ref-r7",
+      "type": "note",
+      "position": {
+        "x": 1070,
+        "y": 8330
+      },
+      "data": {
+        "label": "Software in use",
+        "tone": "info",
+        "items": [
+          "Eka Care · 5 places (front desk, lab, invoicing, pharmacy billing, 1 doctor)",
+          "eVitals · pharmacy dispensing and pharmacy bill",
+          "HP Scan · scanning prescriptions back in",
+          "WhatsApp · partners, lab, patients, follow-ups"
+        ]
+      }
+    },
+    {
+      "id": "ref-r8",
+      "type": "note",
+      "position": {
+        "x": 1580,
+        "y": 8330
+      },
+      "data": {
+        "label": "Partner integrations",
+        "tone": "info",
+        "items": [
+          "MediBuddy · Sam Health · Hexa · Pristyn Care (admissions, cashless)",
+          "Bioline (lab samples and results)",
+          "All coordinated through WhatsApp groups",
+          "Practo is deliberately not used"
+        ]
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "sch-start->sch-call",
+      "source": "sch-start",
+      "target": "sch-call",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "sch-call->arr-arrive",
+      "source": "sch-call",
+      "target": "arr-arrive",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "arr-arrive->arr-book",
+      "source": "arr-arrive",
+      "target": "arr-book",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "arr-book->arr-ask",
+      "source": "arr-book",
+      "target": "arr-ask",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "arr-ask->reg-new",
+      "source": "arr-ask",
+      "target": "reg-new",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "reg-new->reg-create",
+      "source": "reg-new",
+      "target": "reg-create",
+      "label": "New",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "reg-new->reg-search",
+      "source": "reg-new",
+      "target": "reg-search",
+      "label": "Existing",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "reg-search->reg-addnum",
+      "source": "reg-search",
+      "target": "reg-addnum",
+      "label": "No number on file",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "reg-search->reg-fup",
+      "source": "reg-search",
+      "target": "reg-fup",
+      "label": "Number found",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "reg-create->reg-form",
+      "source": "reg-create",
+      "target": "reg-form",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "reg-addnum->reg-form",
+      "source": "reg-addnum",
+      "target": "reg-form",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "reg-fup->reg-form",
+      "source": "reg-fup",
+      "target": "reg-form",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "reg-form->reg-send",
+      "source": "reg-form",
+      "target": "reg-send",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "reg-send->que-walk",
+      "source": "reg-send",
+      "target": "que-walk",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "que-walk->que-rush",
+      "source": "que-walk",
+      "target": "que-rush",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "que-rush->que-wait",
+      "source": "que-rush",
+      "target": "que-wait",
+      "label": "Yes",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "que-rush->que-normal",
+      "source": "que-rush",
+      "target": "que-normal",
+      "label": "No",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "que-wait->que-tag",
+      "source": "que-wait",
+      "target": "que-tag",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "que-normal->que-tag",
+      "source": "que-normal",
+      "target": "que-tag",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "que-tag->que-doc-list",
+      "source": "que-tag",
+      "target": "que-doc-list",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "que-doc-list->con-see",
+      "source": "que-doc-list",
+      "target": "con-see",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "con-see->con-write",
+      "source": "con-see",
+      "target": "con-write",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "con-write->con-send",
+      "source": "con-write",
+      "target": "con-send",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "con-write->lab-order",
+      "source": "con-write",
+      "target": "lab-order",
+      "label": "test advised",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#1E5F4B",
+        "strokeWidth": 1.6,
+        "strokeDasharray": "6 4"
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#1E5F4B"
+      }
+    },
+    {
+      "id": "con-write->ipd-admit",
+      "source": "con-write",
+      "target": "ipd-admit",
+      "label": "admission needed",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#1E5F4B",
+        "strokeWidth": 1.6,
+        "strokeDasharray": "6 4"
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#1E5F4B"
+      }
+    },
+    {
+      "id": "con-send->pha-read",
+      "source": "con-send",
+      "target": "pha-read",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "pha-read->pha-search",
+      "source": "pha-read",
+      "target": "pha-search",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "pha-search->pha-bill",
+      "source": "pha-search",
+      "target": "pha-bill",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "pha-bill->pha-total",
+      "source": "pha-bill",
+      "target": "pha-total",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "pha-total->inv-bill",
+      "source": "pha-total",
+      "target": "inv-bill",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "inv-bill->inv-pay",
+      "source": "inv-bill",
+      "target": "inv-pay",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "inv-pay->scn-return",
+      "source": "inv-pay",
+      "target": "scn-return",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "scn-return->scn-scan",
+      "source": "scn-return",
+      "target": "scn-scan",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "scn-scan->scn-save",
+      "source": "scn-scan",
+      "target": "scn-save",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "scn-save->scn-upload",
+      "source": "scn-save",
+      "target": "scn-upload",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "scn-upload->fup-msg",
+      "source": "scn-upload",
+      "target": "fup-msg",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "fup-msg->fup-free",
+      "source": "fup-msg",
+      "target": "fup-free",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "fup-free->fup-end",
+      "source": "fup-free",
+      "target": "fup-end",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "lab-order->lab-type",
+      "source": "lab-order",
+      "target": "lab-type",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "lab-type->lab-collect",
+      "source": "lab-type",
+      "target": "lab-collect",
+      "label": "Lab test",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "lab-type->lab-imaging",
+      "source": "lab-type",
+      "target": "lab-imaging",
+      "label": "Imaging",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "lab-collect->lab-bioline",
+      "source": "lab-collect",
+      "target": "lab-bioline",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "lab-bioline->lab-template",
+      "source": "lab-bioline",
+      "target": "lab-template",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "lab-template->lab-download",
+      "source": "lab-template",
+      "target": "lab-download",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "lab-download->lab-upload",
+      "source": "lab-download",
+      "target": "lab-upload",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "lab-upload->lab-wa",
+      "source": "lab-upload",
+      "target": "lab-wa",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "lab-wa->lab-end",
+      "source": "lab-wa",
+      "target": "lab-end",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "lab-imaging->lab-end",
+      "source": "lab-imaging",
+      "target": "lab-end",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "ipd-source->ipd-cash",
+      "source": "ipd-source",
+      "target": "ipd-cash",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "ipd-cash->ipd-admit",
+      "source": "ipd-cash",
+      "target": "ipd-admit",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "ipd-admit->ipd-board",
+      "source": "ipd-admit",
+      "target": "ipd-board",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "ipd-board->ipd-bill",
+      "source": "ipd-board",
+      "target": "ipd-bill",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    },
+    {
+      "id": "ipd-bill->ipd-end",
+      "source": "ipd-bill",
+      "target": "ipd-end",
+      "type": "smoothstep",
+      "animated": false,
+      "style": {
+        "stroke": "#5B5550",
+        "strokeWidth": 1.6
+      },
+      "labelStyle": {
+        "fill": "#3a3430",
+        "fontSize": 11,
+        "fontWeight": 500
+      },
+      "labelBgStyle": {
+        "fill": "#F5F2EA"
+      },
+      "labelBgPadding": [
+        6,
+        3
+      ],
+      "labelBgBorderRadius": 4,
+      "markerEnd": {
+        "type": "arrowclosed",
+        "color": "#5B5550"
+      }
+    }
+  ]
+};</script>
+<script>(function () {
+  "use strict";
+
+  var W_NOTE = 300, W_STEP = 260, GAP = 30, PAD = 34, MARGIN = 70;
+
+  var CFG = (typeof FLOW_CONFIG !== "undefined" && FLOW_CONFIG) || {};
+  var ROLE_COLOR = CFG.roleColor || {
+    reception: "#C96A4A", doctor: "#2E4A7B", nurse: "#A47C1B",
+    patient: "#2F7D7B", admin: "#1E5F4B", system: "#3B3B3B",
+    pharmacist: "#6E4B8E"
+  };
+  var ROLE_NAME = CFG.roleName || {
+    reception: "Reception", doctor: "Doctor", nurse: "Nurse",
+    patient: "Patient", admin: "PR / IP Team", system: "System",
+    pharmacist: "Partner Lab"
+  };
+  var PREFIX = CFG.prefix || [
+    ["reg-r", "ph-r"], ["sch-", "ph-1"], ["bk-", "ph-2"], ["arr-", "ph-3"],
+    ["reg-", "ph-4"], ["bil-", "ph-5"], ["cons-", "ph-6"], ["sl-", "ph-7"],
+    ["oth-", "ph-8"], ["eod-", "ph-9"], ["pd-", "ph-s1"], ["pr-", "ph-s2"]
+  ];
+
+  var state = JSON.parse(JSON.stringify(FLOW_DATA));
+  var phases = [], items = [], rects = {}, phaseBox = {};
+  var ORIGIN = null, CW = 0, CH = 0;
+  var k = 1, tx = 0, ty = 0;
+  var editMode = false, linkFrom = null, sel = null, undoStack = [], booted = false;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var elNodes = $("nodes"), elBands = $("bands"), elLabels = $("labels");
+  var svg = $("edges"), canvas = $("canvas"), vp = $("vp"), insp = $("inspector");
+
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function phaseOf(n) {
+    if (n.data && n.data.phase) return n.data.phase;
+    for (var i = 0; i < PREFIX.length; i++)
+      if (n.id.indexOf(PREFIX[i][0]) === 0) return PREFIX[i][1];
+    return null;
+  }
+  function split() {
+    phases = []; items = [];
+    state.nodes.forEach(function (n) { (n.type === "phase" ? phases : items).push(n); });
+  }
+  function nodeById(id) {
+    for (var i = 0; i < state.nodes.length; i++) if (state.nodes[i].id === id) return state.nodes[i];
+    return null;
+  }
+  function pushUndo() {
+    undoStack.push(JSON.stringify({ nodes: state.nodes, edges: state.edges }));
+    if (undoStack.length > 40) undoStack.shift();
+  }
+
+  // ---------------- nodes ----------------
+  function renderNodes() {
+    elNodes.innerHTML = ""; rects = {};
+    items.forEach(function (n) {
+      var d = n.data || (n.data = {});
+      var el = document.createElement("div");
+      el.className = "n n-" + n.type + (n.type === "note" && d.tone ? " " + d.tone : "") +
+        (editMode ? " editable" : "") + (sel === n.id ? " sel" : "") +
+        (linkFrom === n.id ? " linksrc" : "");
+      el.dataset.id = n.id;
+      el.style.width = (n.type === "note" ? W_NOTE : W_STEP) + "px";
+      el.style.left = n.position.x + "px";
+      el.style.top = n.position.y + "px";
+
+      var h = "";
+      if (n.type === "note") {
+        h += '<span class="tag">' +
+          (d.tone === "warn" ? "Gap" : d.tone === "success" ? "Supported" : "Note") + "</span>";
+      } else if (d.role) {
+        h += '<span class="role" style="color:' + (ROLE_COLOR[d.role] || "#3B3B3B") + '">' +
+          esc(ROLE_NAME[d.role] || d.role) + "</span>";
+      }
+      h += '<span class="lbl">' + esc(d.label || "") + "</span>";
+      if (d.items && d.items.length) {
+        h += "<ul>";
+        d.items.forEach(function (it) { h += "<li>" + esc(it) + "</li>"; });
+        h += "</ul>";
+      }
+      if (d.integration) h += '<span class="ext">External system</span>';
+      el.innerHTML = h;
+      elNodes.appendChild(el);
+      rects[n.id] = { x: n.position.x, y: n.position.y, w: parseFloat(el.style.width), h: 0, el: el };
+    });
+    items.forEach(function (n) { rects[n.id].h = rects[n.id].el.offsetHeight; });
+  }
+
+  function declutter() {
+    var cols = {};
+    items.forEach(function (n) {
+      var r = rects[n.id];
+      (cols[r.x] = cols[r.x] || []).push({ r: r, n: n });
+    });
+    Object.keys(cols).forEach(function (c) {
+      var l = cols[c].sort(function (a, b) { return a.r.y - b.r.y; });
+      for (var i = 1; i < l.length; i++) {
+        var min = l[i - 1].r.y + l[i - 1].r.h + GAP;
+        if (l[i].r.y < min) { l[i].r.y = min; l[i].n.position.y = min; }
+      }
+    });
+    items.forEach(function (n) { rects[n.id].el.style.top = rects[n.id].y + "px"; });
+  }
+
+  // ---------------- bands ----------------
+  function renderBands() {
+    elBands.innerHTML = ""; phaseBox = {};
+    items.forEach(function (n) {
+      var p = phaseOf(n); if (!p) return;
+      var r = rects[n.id];
+      var b = phaseBox[p] || (phaseBox[p] = { x1: 1e9, y1: 1e9, x2: -1e9, y2: -1e9 });
+      b.x1 = Math.min(b.x1, r.x); b.y1 = Math.min(b.y1, r.y);
+      b.x2 = Math.max(b.x2, r.x + r.w); b.y2 = Math.max(b.y2, r.y + r.h);
+    });
+    phases.forEach(function (p) {
+      var b = phaseBox[p.id]; if (!b) return;
+      var d = p.data;
+      var box = { x: b.x1 - PAD, y: b.y1 - PAD, w: b.x2 - b.x1 + PAD * 2, h: b.y2 - b.y1 + PAD * 2 };
+      phaseBox[p.id].box = box;
+      var el = document.createElement("div");
+      el.className = "band";
+      el.style.cssText = "left:" + box.x + "px;top:" + box.y + "px;width:" + box.w +
+        "px;height:" + box.h + "px;background:" + d.accent + "4D;border-left-color:" + d.stroke;
+      el.innerHTML = '<div class="band-hd"><span class="t">' + esc(d.label) +
+        '</span><span class="o">' + esc(d.owner || "") + "</span></div>";
+      elBands.appendChild(el);
+    });
+  }
+
+  function sizeCanvas() {
+    var x1 = 1e9, y1 = 1e9, x2 = -1e9, y2 = -1e9;
+    Object.keys(phaseBox).forEach(function (id) {
+      var b = phaseBox[id].box; if (!b) return;
+      x1 = Math.min(x1, b.x); y1 = Math.min(y1, b.y - 20);
+      x2 = Math.max(x2, b.x + b.w); y2 = Math.max(y2, b.y + b.h);
+    });
+    items.forEach(function (n) {
+      var r = rects[n.id];
+      x1 = Math.min(x1, r.x); y1 = Math.min(y1, r.y);
+      x2 = Math.max(x2, r.x + r.w); y2 = Math.max(y2, r.y + r.h);
+    });
+    x1 -= MARGIN; y1 -= MARGIN; x2 += MARGIN; y2 += MARGIN;
+    if (!ORIGIN) ORIGIN = { x: x1, y: y1 };
+    CW = Math.max(x2, ORIGIN.x + 100) - ORIGIN.x;
+    CH = Math.max(y2, ORIGIN.y + 100) - ORIGIN.y;
+    canvas.style.width = CW + "px"; canvas.style.height = CH + "px";
+    [elBands, elNodes, elLabels].forEach(function (l) {
+      l.style.transform = "translate(" + (-ORIGIN.x) + "px," + (-ORIGIN.y) + "px)";
+    });
+    svg.setAttribute("width", CW); svg.setAttribute("height", CH);
+    svg.setAttribute("viewBox", ORIGIN.x + " " + ORIGIN.y + " " + CW + " " + CH);
+  }
+
+  // ---------------- edges ----------------
+  function dist(a, b) { return Math.hypot(b[0] - a[0], b[1] - a[1]); }
+  function unit(f, t) {
+    var dx = t[0] - f[0], dy = t[1] - f[1], m = Math.hypot(dx, dy) || 1;
+    return [dx / m, dy / m];
+  }
+  function roundedPath(pts, r) {
+    var c = [pts[0]];
+    for (var i = 1; i < pts.length; i++) if (dist(pts[i], c[c.length - 1]) > 0.5) c.push(pts[i]);
+    if (c.length < 2) return "";
+    var d = "M " + c[0][0] + " " + c[0][1];
+    for (var j = 1; j < c.length - 1; j++) {
+      var p0 = c[j - 1], p1 = c[j], p2 = c[j + 1];
+      var r1 = Math.min(r, dist(p0, p1) / 2), r2 = Math.min(r, dist(p1, p2) / 2);
+      var v1 = unit(p1, p0), v2 = unit(p1, p2);
+      d += " L " + (p1[0] + v1[0] * r1) + " " + (p1[1] + v1[1] * r1) +
+        " Q " + p1[0] + " " + p1[1] + " " + (p1[0] + v2[0] * r2) + " " + (p1[1] + v2[1] * r2);
+    }
+    return d + " L " + c[c.length - 1][0] + " " + c[c.length - 1][1];
+  }
+
+  function drawEdges() {
+    svg.innerHTML = ""; elLabels.innerHTML = "";
+    var NS = "http://www.w3.org/2000/svg";
+    var defs = document.createElementNS(NS, "defs"), seen = {};
+    state.edges.forEach(function (e) {
+      var c = (e.style && e.style.stroke) || "#5B5550";
+      if (seen[c]) return; seen[c] = 1;
+      var m = document.createElementNS(NS, "marker");
+      m.setAttribute("id", "arw-" + c.replace("#", ""));
+      m.setAttribute("markerWidth", "9"); m.setAttribute("markerHeight", "7");
+      m.setAttribute("refX", "8"); m.setAttribute("refY", "3.5");
+      m.setAttribute("orient", "auto"); m.setAttribute("markerUnits", "userSpaceOnUse");
+      var p = document.createElementNS(NS, "path");
+      p.setAttribute("d", "M0,0 L9,3.5 L0,7 z"); p.setAttribute("fill", c);
+      m.appendChild(p); defs.appendChild(m);
+    });
+    svg.appendChild(defs);
+
+    state.edges.forEach(function (e) {
+      var s = rects[e.source], t = rects[e.target];
+      if (!s || !t) return;
+      var sx = s.x + s.w / 2, sy = s.y + s.h, txx = t.x + t.w / 2, tyy = t.y - 3, pts;
+      if (tyy > sy + 26) {
+        var mid = sy + Math.max(24, (tyy - sy) / 2);
+        pts = [[sx, sy], [sx, mid], [txx, mid], [txx, tyy]];
+      } else {
+        var ch = Math.max(s.x + s.w, t.x + t.w) + 96;
+        pts = [[sx, sy], [sx, sy + 42], [ch, sy + 42], [ch, tyy - 52], [txx, tyy - 52], [txx, tyy]];
+      }
+      var d = roundedPath(pts, 11);
+      var col = (e.style && e.style.stroke) || "#5B5550";
+
+      var hit = document.createElementNS(NS, "path");
+      hit.setAttribute("d", d); hit.setAttribute("class", "ehit");
+      hit.dataset.id = e.id;
+      svg.appendChild(hit);
+
+      var p = document.createElementNS(NS, "path");
+      p.setAttribute("d", d); p.setAttribute("fill", "none");
+      p.setAttribute("stroke", col);
+      p.setAttribute("stroke-width", (e.style && e.style.strokeWidth) || 1.6);
+      if (e.style && e.style.strokeDasharray) p.setAttribute("stroke-dasharray", e.style.strokeDasharray);
+      p.setAttribute("marker-end", "url(#arw-" + col.replace("#", "") + ")");
+      p.setAttribute("class", "epath" + (sel === e.id ? " sel" : ""));
+      svg.appendChild(p);
+
+      if (e.label) {
+        var m = p.getPointAtLength(p.getTotalLength() * 0.5);
+        var lab = document.createElement("div");
+        lab.className = "elabel"; lab.textContent = e.label;
+        lab.style.left = m.x + "px"; lab.style.top = m.y + "px";
+        elLabels.appendChild(lab);
+      }
+    });
+    svg.style.pointerEvents = editMode ? "auto" : "none";
+  }
+
+  // ---------------- rail ----------------
+  function renderRail() {
+    var list = $("phaseList"); list.innerHTML = "";
+    phases.forEach(function (p) {
+      var b = phaseBox[p.id] && phaseBox[p.id].box; if (!b) return;
+      var parts = p.data.label.split("·");
+      var btn = document.createElement("button");
+      btn.className = "phase-btn"; btn.type = "button";
+      btn.innerHTML = '<span class="num">' + esc(parts[0].trim()) + '</span>' +
+        '<span class="swatch" style="background:' + p.data.stroke + '"></span>' +
+        '<span class="nm">' + esc(parts.slice(1).join("·").trim()) + "</span>";
+      btn.addEventListener("click", function () { jumpTo(b); });
+      list.appendChild(btn);
+    });
+    $("counts").textContent = items.length + " nodes · " + state.edges.length +
+      " transitions · " + phases.length + " phases";
+  }
+
+  function render(first) {
+    split(); renderNodes();
+    if (first) declutter();
+    renderBands(); sizeCanvas(); drawEdges(); renderRail(); drawMinimap(); apply();
+  }
+
+  // ---------------- view ----------------
+  var sbv = $("sbv"), sbvt = $("sbvt"), sbh = $("sbh"), sbht = $("sbht"), sbc = $("sbc");
+
+  function clampPan() {
+    var r = vp.getBoundingClientRect();
+    var cw = CW * k, ch = CH * k;
+    if (cw <= r.width) tx = (r.width - cw) / 2;
+    else tx = Math.min(0, Math.max(r.width - cw, tx));
+    if (ch <= r.height) ty = (r.height - ch) / 2;
+    else ty = Math.min(0, Math.max(r.height - ch, ty));
+  }
+
+  function updateScrollbars() {
+    var r = vp.getBoundingClientRect();
+    var cw = CW * k, ch = CH * k;
+    var vShow = ch > r.height + 1, hShow = cw > r.width + 1;
+    sbv.hidden = !vShow; sbh.hidden = !hShow; sbc.hidden = !(vShow && hShow);
+    if (vShow) {
+      var track = sbv.clientHeight;
+      var th = Math.max(32, track * (r.height / ch));
+      var span = Math.max(1, track - th);
+      sbvt.style.height = th + "px";
+      sbvt.style.top = Math.max(0, Math.min(span, span * (-ty) / (ch - r.height))) + "px";
+    }
+    if (hShow) {
+      var trackH = sbh.clientWidth;
+      var tw = Math.max(32, trackH * (r.width / cw));
+      var spanH = Math.max(1, trackH - tw);
+      sbht.style.width = tw + "px";
+      sbht.style.left = Math.max(0, Math.min(spanH, spanH * (-tx) / (cw - r.width))) + "px";
+    }
+  }
+
+  function apply() {
+    clampPan();
+    canvas.style.transform = "translate(" + tx + "px," + ty + "px) scale(" + k + ")";
+    updateScrollbars();
+    drawMinimapView();
+  }
+  function clampK(v) { return Math.min(2.2, Math.max(0.06, v)); }
+
+  function scrollBy(dx, dy) { tx -= dx; ty -= dy; apply(); }
+  function fitAll() {
+    var r = vp.getBoundingClientRect();
+    k = clampK(Math.min(r.width / CW, r.height / CH) * 0.96);
+    tx = (r.width - CW * k) / 2; ty = (r.height - CH * k) / 2; apply();
+  }
+  function fitWidth() {
+    var r = vp.getBoundingClientRect();
+    k = clampK(Math.min((r.width - 40) / CW, 0.72));
+    tx = (r.width - CW * k) / 2; ty = 24; apply();
+  }
+  function jumpTo(b) {
+    k = clampK(Math.max(k, 0.42));
+    tx = 40 - (b.x - ORIGIN.x) * k; ty = 46 - (b.y - ORIGIN.y) * k; apply();
+  }
+  function zoomBy(f) {
+    var r = vp.getBoundingClientRect(), mx = r.width / 2, my = r.height / 2;
+    var nk = clampK(k * f);
+    tx = mx - (mx - tx) * (nk / k); ty = my - (my - ty) * (nk / k); k = nk; apply();
+  }
+  function toContent(ev) {
+    var r = vp.getBoundingClientRect();
+    return { x: (ev.clientX - r.left - tx) / k + ORIGIN.x, y: (ev.clientY - r.top - ty) / k + ORIGIN.y };
+  }
+
+  vp.addEventListener("wheel", function (ev) {
+    ev.preventDefault();
+    var f = ev.deltaMode === 1 ? 16 : ev.deltaMode === 2 ? 400 : 1;
+    if (ev.ctrlKey || ev.metaKey) {
+      var r = vp.getBoundingClientRect(), mx = ev.clientX - r.left, my = ev.clientY - r.top;
+      var nk = clampK(k * Math.pow(1.0022, -ev.deltaY * f));
+      tx = mx - (mx - tx) * (nk / k); ty = my - (my - ty) * (nk / k); k = nk; apply();
+      return;
+    }
+    var dx = ev.deltaX * f, dy = ev.deltaY * f;
+    if (ev.shiftKey && !ev.deltaX) { dx = dy; dy = 0; }
+    scrollBy(dx, dy);
+  }, { passive: false });
+
+  // scrollbar thumbs
+  function bindThumb(bar, thumb, axis) {
+    thumb.addEventListener("pointerdown", function (ev) {
+      ev.preventDefault(); ev.stopPropagation();
+      thumb.classList.add("drag");
+      var s0 = axis === "y" ? ev.clientY : ev.clientX;
+      var t0 = axis === "y" ? ty : tx;
+      function move(e2) {
+        var r = vp.getBoundingClientRect();
+        var vpLen = axis === "y" ? r.height : r.width;
+        var cLen = axis === "y" ? CH * k : CW * k;
+        var track = axis === "y" ? bar.clientHeight : bar.clientWidth;
+        var tLen = axis === "y" ? thumb.offsetHeight : thumb.offsetWidth;
+        var span = track - tLen;
+        if (span <= 0 || cLen <= vpLen) return;
+        var d = ((axis === "y" ? e2.clientY : e2.clientX) - s0) / span * (cLen - vpLen);
+        if (axis === "y") ty = t0 - d; else tx = t0 - d;
+        apply();
+      }
+      function up() {
+        thumb.classList.remove("drag");
+        document.removeEventListener("pointermove", move);
+        document.removeEventListener("pointerup", up);
+      }
+      document.addEventListener("pointermove", move);
+      document.addEventListener("pointerup", up);
+    });
+  }
+  bindThumb(sbv, sbvt, "y");
+  bindThumb(sbh, sbht, "x");
+
+  // click the track to page up/down
+  sbv.addEventListener("pointerdown", function (ev) {
+    if (ev.target === sbvt) return;
+    var r = vp.getBoundingClientRect();
+    var b = sbv.getBoundingClientRect();
+    scrollBy(0, (ev.clientY - b.top < sbvt.offsetTop ? -1 : 1) * r.height * 0.85);
+  });
+  sbh.addEventListener("pointerdown", function (ev) {
+    if (ev.target === sbht) return;
+    var r = vp.getBoundingClientRect();
+    var b = sbh.getBoundingClientRect();
+    scrollBy((ev.clientX - b.left < sbht.offsetLeft ? -1 : 1) * r.width * 0.85, 0);
+  });
+
+  var drag = null;
+  vp.addEventListener("pointerdown", function (ev) {
+    if (ev.target.closest && ev.target.closest(".sbar, .sbar-corner")) return;
+    var nEl = ev.target.closest ? ev.target.closest(".n") : null;
+
+    if (editMode && ev.target.classList && ev.target.classList.contains("ehit")) {
+      sel = ev.target.dataset.id; linkFrom = null; render(); openInspector(); return;
+    }
+    if (editMode && nEl) {
+      var id = nEl.dataset.id;
+      if (linkFrom) {
+        if (linkFrom !== id) createEdge(linkFrom, id);
+        linkFrom = null; vp.classList.remove("linking"); render(); return;
+      }
+      sel = id; render(); openInspector();
+      drag = { kind: "node", id: id, x: ev.clientX, y: ev.clientY,
+               nx: nodeById(id).position.x, ny: nodeById(id).position.y, moved: false };
+      vp.setPointerCapture(ev.pointerId);
+      return;
+    }
+    if (editMode && !nEl) { sel = null; linkFrom = null; vp.classList.remove("linking"); render(); closeInspector(); }
+    drag = { kind: "pan", x: ev.clientX, y: ev.clientY, tx: tx, ty: ty };
+    vp.setPointerCapture(ev.pointerId); vp.classList.add("dragging");
+  });
+
+  vp.addEventListener("pointermove", function (ev) {
+    if (!drag) return;
+    if (drag.kind === "pan") {
+      tx = drag.tx + (ev.clientX - drag.x); ty = drag.ty + (ev.clientY - drag.y); apply();
+    } else {
+      var n = nodeById(drag.id); if (!n) return;
+      if (!drag.moved) { pushUndo(); drag.moved = true; }
+      n.position.x = Math.round(drag.nx + (ev.clientX - drag.x) / k);
+      n.position.y = Math.round(drag.ny + (ev.clientY - drag.y) / k);
+      var r = rects[drag.id];
+      r.x = n.position.x; r.y = n.position.y;
+      r.el.style.left = r.x + "px"; r.el.style.top = r.y + "px";
+      drawEdges();
+    }
+  });
+
+  ["pointerup", "pointercancel"].forEach(function (t) {
+    vp.addEventListener(t, function () {
+      var wasNode = drag && drag.kind === "node" && drag.moved;
+      drag = null; vp.classList.remove("dragging");
+      if (wasNode) { renderBands(); sizeCanvas(); drawEdges(); drawMinimap(); }
+    });
+  });
+
+  // ---------------- editing ----------------
+  function createEdge(s, t) {
+    pushUndo();
+    var id = s + "->" + t;
+    if (state.edges.some(function (e) { return e.id === id; })) return;
+    state.edges.push({
+      id: id, source: s, target: t, type: "smoothstep", animated: false,
+      style: { stroke: "#5B5550", strokeWidth: 1.6 },
+      labelStyle: { fill: "#3a3430", fontSize: 11, fontWeight: 500 },
+      labelBgStyle: { fill: "#F5F2EA" }, labelBgPadding: [6, 3], labelBgBorderRadius: 4,
+      markerEnd: { type: "arrowclosed", color: "#5B5550" }
+    });
+    sel = id;
+  }
+
+  function addNode() {
+    pushUndo();
+    var r = vp.getBoundingClientRect();
+    var cx = Math.round((r.width / 2 - tx) / k + ORIGIN.x) - W_STEP / 2;
+    var cy = Math.round((r.height / 2 - ty) / k + ORIGIN.y);
+    var ph = "ph-1";
+    Object.keys(phaseBox).forEach(function (id) {
+      var b = phaseBox[id].box;
+      if (b && cy >= b.y && cy <= b.y + b.h) ph = id;
+    });
+    var i = 1; while (nodeById("new-" + i)) i++;
+    state.nodes.push({
+      id: "new-" + i, type: "step", position: { x: cx, y: cy },
+      data: { label: "New step", role: "reception", phase: ph }
+    });
+    sel = "new-" + i;
+    render(); openInspector();
+  }
+
+  function deleteSelected() {
+    if (!sel) return;
+    pushUndo();
+    if (nodeById(sel)) {
+      state.nodes = state.nodes.filter(function (n) { return n.id !== sel; });
+      state.edges = state.edges.filter(function (e) { return e.source !== sel && e.target !== sel; });
+    } else {
+      state.edges = state.edges.filter(function (e) { return e.id !== sel; });
+    }
+    sel = null; render(); closeInspector();
+  }
+
+  function undo() {
+    if (!undoStack.length) return;
+    var s = JSON.parse(undoStack.pop());
+    state.nodes = s.nodes; state.edges = s.edges;
+    sel = null; render(); closeInspector();
+  }
+
+  // ---------------- inspector ----------------
+  function closeInspector() { insp.hidden = true; }
+
+  function openInspector() {
+    if (!sel) return closeInspector();
+    insp.hidden = false;
+    var n = nodeById(sel);
+    if (n) return inspectNode(n);
+    var e = state.edges.filter(function (x) { return x.id === sel; })[0];
+    if (e) return inspectEdge(e);
+    closeInspector();
+  }
+
+  function opts(list, cur) {
+    return list.map(function (o) {
+      var v = typeof o === "string" ? o : o[0], t = typeof o === "string" ? o : o[1];
+      return '<option value="' + v + '"' + (v === cur ? " selected" : "") + ">" + esc(t) + "</option>";
+    }).join("");
+  }
+
+  function inspectNode(n) {
+    var d = n.data || (n.data = {});
+    var isNote = n.type === "note";
+    var h = '<h2>Node</h2><div class="insp-id">' + esc(n.id) + "</div>";
+    h += '<div class="fld"><label>Type</label><select id="f-type">' +
+      opts([["step", "Step"], ["decision", "Decision"], ["note", "Note / Gap"],
+            ["start", "Start"], ["end", "End"]], n.type) + "</select></div>";
+    if (isNote) {
+      h += '<div class="fld"><label>Tone</label><select id="f-tone">' +
+        opts([["warn", "Gap (red)"], ["info", "Note (blue)"], ["success", "Supported (green)"]],
+             d.tone || "info") + "</select></div>";
+    } else {
+      h += '<div class="fld"><label>Who does it</label><select id="f-role">' +
+        opts(Object.keys(ROLE_NAME).map(function (r) { return [r, ROLE_NAME[r]]; }), d.role || "reception") +
+        "</select></div>";
+    }
+    h += '<div class="fld"><label>Phase</label><select id="f-phase">' +
+      opts(phases.map(function (p) { return [p.id, p.data.label]; }), phaseOf(n)) + "</select></div>";
+    h += '<div class="fld"><label>Label</label><textarea id="f-label" rows="3">' +
+      esc(d.label || "") + "</textarea></div>";
+    h += '<div class="fld"><label>Detail lines (one per line)</label><textarea id="f-items" rows="5">' +
+      esc((d.items || []).join("\n")) + "</textarea></div>";
+    if (!isNote) {
+      h += '<div class="fld row"><input type="checkbox" id="f-int"' +
+        (d.integration ? " checked" : "") + '><label for="f-int">Runs on an external system</label></div>';
+    }
+    h += '<div class="insp-actions"><button class="btn wide" id="f-link" type="button">Draw link from here</button></div>';
+    h += '<div class="insp-actions"><button class="btn danger wide" id="f-del" type="button">Delete node</button></div>';
+    insp.innerHTML = h;
+
+    function commit(fn) { pushUndo(); fn(); render(); openInspector(); }
+    $("f-type").addEventListener("change", function () {
+      commit(function () {
+        n.type = $("f-type").value;
+        if (n.type === "note") { d.tone = d.tone || "info"; delete d.role; delete d.integration; }
+        else { d.role = d.role || "reception"; delete d.tone; }
+      });
+    });
+    if ($("f-tone")) $("f-tone").addEventListener("change", function () { commit(function () { d.tone = $("f-tone").value; }); });
+    if ($("f-role")) $("f-role").addEventListener("change", function () { commit(function () { d.role = $("f-role").value; }); });
+    $("f-phase").addEventListener("change", function () { commit(function () { d.phase = $("f-phase").value; }); });
+    if ($("f-int")) $("f-int").addEventListener("change", function () { commit(function () { d.integration = $("f-int").checked; }); });
+
+    ["f-label", "f-items"].forEach(function (id) {
+      var el = $(id), before = null;
+      el.addEventListener("focus", function () { before = el.value; });
+      el.addEventListener("blur", function () {
+        if (el.value === before) return;
+        pushUndo();
+        if (id === "f-label") d.label = el.value;
+        else {
+          var lines = el.value.split("\n").map(function (s) { return s.trim(); }).filter(Boolean);
+          if (lines.length) d.items = lines; else delete d.items;
+        }
+        render(); openInspector();
+      });
+    });
+    $("f-link").addEventListener("click", function () {
+      linkFrom = n.id; vp.classList.add("linking"); render();
+    });
+    $("f-del").addEventListener("click", deleteSelected);
+  }
+
+  function inspectEdge(e) {
+    var dashed = !!(e.style && e.style.strokeDasharray);
+    var h = '<h2>Link</h2><div class="insp-id">' + esc(e.source) + " → " + esc(e.target) + "</div>";
+    h += '<div class="fld"><label>Label on the arrow</label><input type="text" id="e-label" value="' +
+      esc(e.label || "") + '"></div>';
+    h += '<div class="fld"><label>Line style</label><select id="e-style">' +
+      opts([["solid", "Solid (main flow)"], ["dashed", "Dashed (cross-link)"]], dashed ? "dashed" : "solid") +
+      "</select></div>";
+    h += '<div class="fld"><label>Colour</label><select id="e-color">' +
+      opts([["#5B5550", "Grey (default)"], ["#1E5F4B", "Green (cross-link)"],
+            ["#C96A4A", "Orange (billing)"]], (e.style && e.style.stroke) || "#5B5550") + "</select></div>";
+    h += '<div class="insp-actions"><button class="btn danger wide" id="e-del" type="button">Delete link</button></div>';
+    insp.innerHTML = h;
+
+    var lab = $("e-label"), before = lab.value;
+    lab.addEventListener("blur", function () {
+      if (lab.value === before) return;
+      pushUndo();
+      if (lab.value.trim()) e.label = lab.value.trim(); else delete e.label;
+      render(); openInspector();
+    });
+    $("e-style").addEventListener("change", function () {
+      pushUndo();
+      e.style = e.style || {};
+      if ($("e-style").value === "dashed") e.style.strokeDasharray = "6 4";
+      else delete e.style.strokeDasharray;
+      render(); openInspector();
+    });
+    $("e-color").addEventListener("change", function () {
+      pushUndo();
+      e.style = e.style || {}; e.style.stroke = $("e-color").value;
+      e.markerEnd = { type: "arrowclosed", color: $("e-color").value };
+      render(); openInspector();
+    });
+    $("e-del").addEventListener("click", deleteSelected);
+  }
+
+  // ---------------- export ----------------
+  function download(name, text, mime) {
+    try {
+      var b = new Blob([text], { type: mime });
+      var u = URL.createObjectURL(b), a = document.createElement("a");
+      a.href = u; a.download = name; document.body.appendChild(a); a.click();
+      setTimeout(function () { URL.revokeObjectURL(u); a.remove(); }, 1500);
+      return true;
+    } catch (err) { return false; }
+  }
+
+  function showModal(title, note, text, filename, mime) {
+    $("mTitle").textContent = title;
+    $("mNote").textContent = note;
+    $("mText").value = text;
+    $("modal").hidden = false;
+    $("mDownload").onclick = function () { download(filename, text, mime); };
+    $("mCopy").onclick = function () {
+      var t = $("mText"); t.select();
+      if (navigator.clipboard) navigator.clipboard.writeText(text).catch(function () {});
+      else try { document.execCommand("copy"); } catch (err) {}
+      $("mCopy").textContent = "Copied";
+      setTimeout(function () { $("mCopy").textContent = "Copy"; }, 1400);
+    };
+  }
+
+  function exportJSON() {
+    showModal("Export flow JSON",
+      "This is the file to attach in Emergent, or to keep as a backup. If the download is blocked, copy the text instead.",
+      JSON.stringify({ nodes: state.nodes, edges: state.edges }, null, 2),
+      "ovum-front-desk-flow.json", "application/json");
+  }
+
+  function saveHTML() {
+    var clone = document.documentElement.cloneNode(true);
+    ["nodes", "bands", "labels", "edges", "phaseList", "legendRoles"].forEach(function (id) {
+      var el = clone.querySelector("#" + id); if (el) el.innerHTML = "";
+    });
+    var c = clone.querySelector("#canvas");
+    if (c) { c.style.transform = ""; c.style.width = ""; c.style.height = ""; }
+    var i = clone.querySelector("#inspector"); if (i) { i.innerHTML = ""; i.hidden = true; }
+    var m = clone.querySelector("#modal"); if (m) m.hidden = true;
+    var fd = clone.querySelector("#flowdata");
+    if (fd) fd.textContent = "const FLOW_DATA=" + JSON.stringify({ nodes: state.nodes, edges: state.edges }) + ";";
+    var html = "<!doctype html>\n" + clone.outerHTML;
+    showModal("Save an updated copy",
+      "Press Download to save this as your new atlas file. If nothing downloads (you are viewing on the web, not from your own file), copy the text and save it as a .html file.",
+      html, "ovum-front-desk-atlas.html", "text/html");
+  }
+
+  // ---------------- minimap ----------------
+  var mmC = $("mm"), mmView = $("mmView"), mmK = 1, mmW = 0, mmH = 0;
+  function drawMinimap() {
+    mmK = Math.min(150 / CW, 430 / CH);
+    mmW = Math.max(1, Math.round(CW * mmK)); mmH = Math.max(1, Math.round(CH * mmK));
+    mmC.width = mmW; mmC.height = mmH;
+    mmC.parentNode.style.width = mmW + "px"; mmC.parentNode.style.height = mmH + "px";
+    var g = mmC.getContext("2d");
+    g.fillStyle = "#F2EFE7"; g.fillRect(0, 0, mmW, mmH);
+    phases.forEach(function (p) {
+      var b = phaseBox[p.id] && phaseBox[p.id].box; if (!b) return;
+      g.fillStyle = p.data.accent;
+      g.fillRect((b.x - ORIGIN.x) * mmK, (b.y - ORIGIN.y) * mmK, b.w * mmK, b.h * mmK);
+      g.fillStyle = p.data.stroke;
+      g.fillRect((b.x - ORIGIN.x) * mmK, (b.y - ORIGIN.y) * mmK, 1.5, b.h * mmK);
+    });
+    items.forEach(function (n) {
+      var r = rects[n.id], d = n.data || {};
+      if (n.type === "note") g.fillStyle = d.tone === "warn" ? "#C0503A" : "#8894AC";
+      else if (n.type === "decision") g.fillStyle = "#C9A24B";
+      else if (n.type === "end") g.fillStyle = "#24201D";
+      else g.fillStyle = ROLE_COLOR[d.role] || "#3B3B3B";
+      g.fillRect((r.x - ORIGIN.x) * mmK, (r.y - ORIGIN.y) * mmK,
+        Math.max(1.5, r.w * mmK), Math.max(1, r.h * mmK));
+    });
+    drawMinimapView();
+  }
+  function drawMinimapView() {
+    if (!ORIGIN) return;
+    var r = vp.getBoundingClientRect();
+    mmView.style.left = Math.max(0, (-tx / k) * mmK) + "px";
+    mmView.style.top = Math.max(0, (-ty / k) * mmK) + "px";
+    mmView.style.width = Math.min(mmW, (r.width / k) * mmK) + "px";
+    mmView.style.height = Math.min(mmH, (r.height / k) * mmK) + "px";
+  }
+  mmC.parentNode.addEventListener("click", function (ev) {
+    var b = mmC.getBoundingClientRect(), r = vp.getBoundingClientRect();
+    tx = r.width / 2 - ((ev.clientX - b.left) / mmK) * k;
+    ty = r.height / 2 - ((ev.clientY - b.top) / mmK) * k;
+    apply();
+  });
+
+  // ---------------- wiring ----------------
+  $("zin").addEventListener("click", function () { zoomBy(1.3); });
+  $("zout").addEventListener("click", function () { zoomBy(1 / 1.3); });
+  $("fit").addEventListener("click", fitAll);
+  $("top").addEventListener("click", fitWidth);
+  $("export").addEventListener("click", exportJSON);
+  $("savehtml").addEventListener("click", saveHTML);
+  $("addnode").addEventListener("click", addNode);
+  $("undo").addEventListener("click", undo);
+  $("mClose").addEventListener("click", function () { $("modal").hidden = true; });
+  $("modal").addEventListener("click", function (ev) {
+    if (ev.target === $("modal")) $("modal").hidden = true;
+  });
+
+  $("edit").addEventListener("click", function () {
+    editMode = !editMode;
+    sel = null; linkFrom = null;
+    vp.classList.remove("linking");
+    $("edit").classList.toggle("on", editMode);
+    $("edit").textContent = editMode ? "Editing" : "Edit";
+    $("editTools").hidden = !editMode;
+    if (!editMode) closeInspector(); else showHelp();
+    render();
+  });
+
+  function showHelp() {
+    insp.hidden = false;
+    insp.innerHTML = '<h2>Edit mode</h2><div class="insp-id">Nothing selected</div>' +
+      '<div class="hint"><p><b>Move</b> a card by dragging it.</p>' +
+      '<p><b>Edit</b> a card by clicking it, then changing the fields here.</p>' +
+      '<p><b>Add</b> a card with the New card button, then drag it where you want.</p>' +
+      '<p><b>Link</b> two cards: select one, press Draw link from here, then click the other card.</p>' +
+      '<p><b>Delete</b> what is selected with the Delete key.</p>' +
+      '<p><b>Undo</b> with <code>Ctrl</code> + <code>Z</code>.</p>' +
+      '<p>When you are done, press <b>Export JSON</b> for Emergent, or <b>Save copy</b> to keep an updated HTML file.</p></div>';
+  }
+
+  document.addEventListener("keydown", function (ev) {
+    if (/^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName)) return;
+    var r = vp.getBoundingClientRect(), STEP = 90;
+    var nav = {
+      ArrowDown: [0, STEP], ArrowUp: [0, -STEP], ArrowRight: [STEP, 0], ArrowLeft: [-STEP, 0],
+      PageDown: [0, r.height * 0.85], PageUp: [0, -r.height * 0.85]
+    };
+    if (nav[ev.key] && !ev.ctrlKey && !ev.metaKey) {
+      ev.preventDefault(); scrollBy(nav[ev.key][0], nav[ev.key][1]); return;
+    }
+    if (ev.key === "Home" && !ev.ctrlKey) { ev.preventDefault(); ty = 0; apply(); return; }
+    if (ev.key === "End" && !ev.ctrlKey) { ev.preventDefault(); ty = -1e9; apply(); return; }
+    if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === "z") { ev.preventDefault(); undo(); }
+    else if ((ev.key === "Delete" || ev.key === "Backspace") && editMode && sel) { ev.preventDefault(); deleteSelected(); }
+    else if (ev.key === "Escape") {
+      if (!$("modal").hidden) $("modal").hidden = true;
+      else { sel = null; linkFrom = null; vp.classList.remove("linking"); render(); closeInspector(); }
+    }
+  });
+
+  var lg = $("legendRoles");
+  Object.keys(ROLE_NAME).forEach(function (r) {
+    var d = document.createElement("div");
+    d.innerHTML = '<span class="dot" style="background:' + ROLE_COLOR[r] + '"></span>' + ROLE_NAME[r];
+    lg.appendChild(d);
+  });
+
+  render(true);
+  fitWidth();
+  booted = true;
+  window.addEventListener("resize", apply);
+})();
+</script>
+</body>
+</html>
