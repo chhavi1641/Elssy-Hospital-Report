@@ -368,6 +368,18 @@ body{
   font-family:var(--font-mono);font-size:9.5px;color:var(--chrome-ink);
   border:1px solid var(--chrome-line);border-radius:3px;padding:1px 4px;font-weight:500;
 }
+
+/* ================= save state ================= */
+.savestate{
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.1em;
+  text-transform:uppercase;white-space:nowrap;
+  border:1px solid var(--chrome-line);border-radius:4px;
+  padding:5px 9px;color:var(--chrome-muted);
+}
+.savestate.saved{color:#8FC7A8;border-color:#2E5E45;background:#152720}
+.savestate.dirty{color:#E8C07A;border-color:#6B5220;background:#2A2214}
+.savestate.off{color:#E8A092;border-color:#6B322A;background:#2A1815}
+.savestate[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -378,11 +390,13 @@ body{
       <h1>Elssy Hospital</h1>
     </div>
     <div class="counts" id="counts"></div>
+    <span class="savestate" id="saveState"></span>
     <div class="tools" id="editTools" hidden>
       <button class="btn" id="addnode" type="button">New card</button>
       <button class="btn" id="undo" type="button">Undo</button>
       <button class="btn" id="export" type="button">Export JSON</button>
       <button class="btn" id="savehtml" type="button">Save copy</button>
+      <button class="btn danger" id="reset" type="button">Reset</button>
     </div>
     <div class="tools">
       <button class="btn" id="edit" type="button">Edit</button>
@@ -447,7 +461,7 @@ body{
     </div>
   </div>
 </div>
-<script>const FLOW_CONFIG={"roleColor":{"reception":"#C96A4A","doctor":"#2E4A7B","lab":"#A47C1B","patient":"#2F7D7B","pharmacy":"#6E4B8E","system":"#3B3B3B","partner":"#1E5F4B"},"roleName":{"reception":"Front Desk","doctor":"Doctor","lab":"Lab Desk","patient":"Patient","pharmacy":"Pharmacy","system":"Eka Care","partner":"Partner"},"prefix":[["ref-r","ph-r"],["sch-","ph-1"],["arr-","ph-2"],["reg-","ph-3"],["que-","ph-4"],["con-","ph-5"],["pha-","ph-6"],["inv-","ph-7"],["scn-","ph-8"],["fup-","ph-9"],["lab-","ph-s1"],["ipd-","ph-s2"]]};</script>
+<script>const FLOW_CONFIG={"storeKey":"elssy-front-desk-atlas-v1","roleColor":{"reception":"#C96A4A","doctor":"#2E4A7B","lab":"#A47C1B","patient":"#2F7D7B","pharmacy":"#6E4B8E","system":"#3B3B3B","partner":"#1E5F4B"},"roleName":{"reception":"Front Desk","doctor":"Doctor","lab":"Lab Desk","patient":"Patient","pharmacy":"Pharmacy","system":"Eka Care","partner":"Partner"},"prefix":[["ref-r","ph-r"],["sch-","ph-1"],["arr-","ph-2"],["reg-","ph-3"],["que-","ph-4"],["con-","ph-5"],["pha-","ph-6"],["inv-","ph-7"],["scn-","ph-8"],["fup-","ph-9"],["lab-","ph-s1"],["ipd-","ph-s2"]]};</script>
 <script id="flowdata">const FLOW_DATA={
   "nodes": [
     {
@@ -3370,7 +3384,22 @@ body{
     ["oth-", "ph-8"], ["eod-", "ph-9"], ["pd-", "ph-s1"], ["pr-", "ph-s2"]
   ];
 
-  var state = JSON.parse(JSON.stringify(FLOW_DATA));
+  var STORE = CFG.storeKey || "flow-atlas-v1";
+  var storageOK = true, restored = false;
+
+  function readStore() {
+    try {
+      var raw = window.localStorage.getItem(STORE);
+      if (!raw) return null;
+      var p = JSON.parse(raw);
+      if (p && p.nodes && p.edges) return p;
+    } catch (err) { storageOK = false; }
+    return null;
+  }
+
+  var saved = readStore();
+  var state = saved || JSON.parse(JSON.stringify(FLOW_DATA));
+  restored = !!saved;
   var phases = [], items = [], rects = {}, phaseBox = {};
   var ORIGIN = null, CW = 0, CH = 0;
   var k = 1, tx = 0, ty = 0;
@@ -3397,6 +3426,30 @@ body{
     for (var i = 0; i < state.nodes.length; i++) if (state.nodes[i].id === id) return state.nodes[i];
     return null;
   }
+  var saveTimer = null;
+  function setStatus(cls, text) {
+    var el = $("saveState"); if (!el) return;
+    el.className = "savestate " + cls; el.textContent = text;
+  }
+  function saveState(now) {
+    if (!storageOK) return;
+    setStatus("dirty", "Saving…");
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      try {
+        window.localStorage.setItem(STORE,
+          JSON.stringify({ nodes: state.nodes, edges: state.edges }));
+        setStatus("saved", "Saved on this computer");
+      } catch (err) {
+        storageOK = false;
+        setStatus("off", "Cannot auto-save · use Save copy");
+      }
+    }, now ? 0 : 400);
+  }
+  function clearStore() {
+    try { window.localStorage.removeItem(STORE); } catch (err) {}
+  }
+
   function pushUndo() {
     undoStack.push(JSON.stringify({ nodes: state.nodes, edges: state.edges }));
     if (undoStack.length > 40) undoStack.shift();
@@ -3603,6 +3656,7 @@ body{
     split(); renderNodes();
     if (first) declutter();
     renderBands(); sizeCanvas(); drawEdges(); renderRail(); drawMinimap(); apply();
+    if (booted) saveState();
   }
 
   // ---------------- view ----------------
@@ -3775,7 +3829,7 @@ body{
     vp.addEventListener(t, function () {
       var wasNode = drag && drag.kind === "node" && drag.moved;
       drag = null; vp.classList.remove("dragging");
-      if (wasNode) { renderBands(); sizeCanvas(); drawEdges(); drawMinimap(); }
+      if (wasNode) { renderBands(); sizeCanvas(); drawEdges(); drawMinimap(); saveState(); }
     });
   });
 
@@ -4054,6 +4108,15 @@ body{
   $("addnode").addEventListener("click", addNode);
   $("undo").addEventListener("click", undo);
   $("mClose").addEventListener("click", function () { $("modal").hidden = true; });
+  $("reset").addEventListener("click", function () {
+    if (!window.confirm("Discard all your edits and go back to the original atlas?")) return;
+    clearStore();
+    state = JSON.parse(JSON.stringify(FLOW_DATA));
+    sel = null; linkFrom = null; undoStack = []; ORIGIN = null;
+    render(true); fitWidth(); closeInspector();
+    setStatus("saved", "Back to original");
+    if (editMode) showHelp();
+  });
   $("modal").addEventListener("click", function (ev) {
     if (ev.target === $("modal")) $("modal").hidden = true;
   });
@@ -4078,7 +4141,11 @@ body{
       '<p><b>Link</b> two cards: select one, press Draw link from here, then click the other card.</p>' +
       '<p><b>Delete</b> what is selected with the Delete key.</p>' +
       '<p><b>Undo</b> with <code>Ctrl</code> + <code>Z</code>.</p>' +
-      '<p>When you are done, press <b>Export JSON</b> for Emergent, or <b>Save copy</b> to keep an updated HTML file.</p></div>';
+      '<p><b>Your edits save automatically.</b> Close the tab and reopen this file and they will still be here.</p>' +
+      (storageOK
+        ? '<p>To move the atlas to another computer, press <b>Save copy</b> and use that file there.</p>'
+        : '<p style="color:#E8A092">This browser is blocking auto-save. Press <b>Save copy</b> before you close the tab.</p>') +
+      '<p><b>Reset</b> throws away your edits and restores the original.</p></div>';
   }
 
   document.addEventListener("keydown", function (ev) {
@@ -4111,6 +4178,15 @@ body{
   render(true);
   fitWidth();
   booted = true;
+  try { window.localStorage.setItem(STORE + "-probe", "1");
+        window.localStorage.removeItem(STORE + "-probe"); }
+  catch (err) { storageOK = false; }
+  if (!storageOK) setStatus("off", "Auto-save unavailable");
+  else if (restored) setStatus("saved", "Your saved edits restored");
+  else setStatus("saved", "Auto-save on");
+  window.addEventListener("beforeunload", function () {
+    if (saveTimer) { clearTimeout(saveTimer); saveState(true); }
+  });
   window.addEventListener("resize", apply);
 })();
 </script>
